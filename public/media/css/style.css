@@ -1,0 +1,22 @@
+.edit {
+    cursor: pointer;
+}
+
+tbody .r {
+   position: relative;
+   padding: 10px 10px 20px 10px;
+}
+
+.table_info {
+    position: absolute;
+    bottom: 0;
+    color: #9a9a9a;
+}
+
+.page-link {
+    cursor: pointer;
+}
+
+.page-item:not([disabled]) {
+    color: #007BFF;
+}
