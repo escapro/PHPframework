@@ -9,5 +9,9 @@ abstract class Controller {
 
     public function __construct($route) {
         $this->route = $route;
+
+        $args = func_get_args();
+
+        
     }
 }

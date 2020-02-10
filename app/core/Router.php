@@ -4,73 +4,43 @@ namespace App\Core;
 
 class Router {
 
-    protected $routes = [];
-    public $url = '';
-    protected $query = [];
-    protected $params = [];
+    public $params;
+    public $route;
 
-    function __construct() {
-        $this->routes = require_once(APP_PATH.'config/routes.php');
+    public function __construct() {
+        require_once(APP_PATH.'core/Functions.php');
+        $this->route = new \Klein\Klein();
     }
 
-    private function getUri() {
+    public function routes() {
 
-        if (!empty($_SERVER['REQUEST_URI'])) {
-
-            $uri = parse_url($_SERVER['REQUEST_URI']);
-            $uri['path'] = trim($uri['path'], '/');
-            ($uri['path'] == '') ? $uri['path'] = '/' : '';
-
-            return $uri;
-        }
+        $this->route->respond('GET', '/', function () {
+            $this->run('welcome@index',);
+        });
     }
 
-    private function match() {
-
-        $uri = $this->getUri();
-
-        $this->uri = $uri['path'];
-
-        if (isset( $uri['query']) ) {
-            parse_str($uri['query'], $output);
-            $this->query = $output;
-        }
+    public function run($pattern, $request=NULL) {
+        $segments = explode('@', $pattern);
+        $controllerName = ucfirst(array_shift($segments));
+        $this->params['controller'] = $controllerName;
+        $controllerPath = 'app\controllers\\'.$controllerName.'Controller';
         
-        return $this->uri;
-    }
-
-    public function run() {
-
-        $uri = $this->match();
-        $result = false;
-        
-        foreach ($this->routes as $pattern => $path) {
-            if(preg_match("~$pattern~", $uri)) {
-                $segments = explode('/', $path);
-                $controllerName = ucfirst(array_shift($segments));
-                $this->params['controller'] = $controllerName;
-                $controllerPath = 'app\controllers\\'.$controllerName.'Controller';
-                $result = true;
-                if(class_exists($controllerPath)) {
-                    $actionName = array_shift($segments);
-                    $this->params['action'] = $actionName;
-                    if(method_exists($controllerPath, $actionName)) {
-                        $params = $segments;
-                        $controller = new $controllerPath($this->params);
-                        $controller->$actionName();
-                    }else {
-                        $result = false;
-                    }
-                }else {
-                    $result = false;
-                }
+        try {
+            $methodName = array_shift($segments);
+            $this->params['method'] = $methodName;
+            $controller = new $controllerPath($request);
+            $methodArgs = ReflectionMethod($controller, $methodName);
+            $argArr = [];
+            foreach ($methodArgs as $value) {
+                $argArr[] = $request->$value;
             }
-            
-        }
-
-        if (!$result) {
+            call_user_func_array([$controller, $methodName], $argArr);
+        } catch (\Throwable $th) {
             Exceptions::error_page(404);
         }
     }
-   
+
+    public function __destruct() {
+        $this->route->dispatch();
+    }
 }

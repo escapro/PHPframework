@@ -1,6 +1,6 @@
 <?php
 
-use App\Core\Router;
+require_once BASE_PATH. 'vendor/autoload.php';
 
 spl_autoload_register(function($class) {
     $path = BASE_PATH.str_replace('\\', '/', $class.'.php'); 
@@ -21,5 +21,5 @@ foreach ($libs as $lib) {
     }
 }
 
-$router = new Router();
-$router->run();
+$router = new App\Core\Router();
+$router->routes();
