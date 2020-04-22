@@ -17,4 +17,9 @@ class Exceptions {
         echo "Причина: ".$e;
         exit();
     }
+
+    public static function csrf_error() {
+        echo "Не удалось проверить CSRF токен";
+        exit();
+    }
 }

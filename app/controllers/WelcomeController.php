@@ -4,7 +4,12 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\View;
+use App\Core\Security;
+// use App\Core\Dev;
+use App\Core\Cookie;
 use App\Models\Post;
+use App\Core\Session;
+use App\Core\Input;
 
 class WelcomeController extends Controller
 {
@@ -17,13 +22,15 @@ class WelcomeController extends Controller
     }
 
     public function index()
-    { 
-        $posts = $this->postModel->getPosts();
+    {   
+        echo Input::post('q');
 
-        $this->data['page_title'] = "Главная страница";
-        $this->data['posts'] = $posts;
-        
         View::render('main', $this->data);
+    }
+
+    public function post()
+    {   
+        echo "hello";
     }
 
 }
