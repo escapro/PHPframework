@@ -11,6 +11,9 @@ class View {
         if($viewData) {
             extract($viewData);
         }
+        if (!file_exists($path)) {
+            Exceptions::file_not_found($path);
+        }
         include($path);
     }
 

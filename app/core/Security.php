@@ -20,13 +20,13 @@ class Security {
         return $return_str;
     }
 
-    public static function csrf_token() {
+    public static function csrf_token($update=false) {
         if (PHP_MAJOR_VERSION >= 7) {
-            if (Cookie::get(config('csrf_token_name')) == NULL) {
+            if (Cookie::get(config('csrf_token_name')) == NULL || $update) {
                 Cookie::put(config('csrf_token_name'), bin2hex(random_bytes(32)), config('csrf_expire'));
             }
         }else {
-            if (Cookie::get(config('csrf_token_name')) == NULL) {
+            if (Cookie::get(config('csrf_token_name')) == NULL || $update) {
                 if (function_exists('mcrypt_create_iv')) {
                     Cookie::put(config('csrf_token_name'), bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM)), onfig('csrf_expire'));
                 } else {
@@ -41,10 +41,12 @@ class Security {
             if (hash_equals(Cookie::get(config('csrf_token_name')), Input::post(config('csrf_token_name')))) {
                 return true;
             } else {
+                self::csrf_token(true);
                 return false;
             }
         }else {
-           return false;
+            self::csrf_token(true);
+            return false;
         }
     }
 

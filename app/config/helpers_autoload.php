@@ -1,6 +1,6 @@
 <?php
 
-$autoload_helpers = [
+return [
     'config',
     'dev',
     'security'

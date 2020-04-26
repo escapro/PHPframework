@@ -2,18 +2,22 @@
 
 namespace App\Core;
 
+use App\Core\Security;
+
 class Input {
 
     public static function get($name) {
-        if (isset($_GET[$name])) {
-            return $_GET[$name];
+        $input = Security::xss_clean($_GET[$name]);
+        if (isset($input)) {
+            return $input;
         }
         return NULL;
     }
 
     public static function post($name) {
-        if (isset($_POST[$name])) {
-            return $_POST[$name];
+        $input = Security::xss_clean($_POST[$name]);
+        if (isset($input)) {
+            return $input;
         }
         return NULL;
     }

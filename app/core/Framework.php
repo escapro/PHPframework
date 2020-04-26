@@ -20,15 +20,17 @@ function load_helper($helper) {
     }
 }
 
-if (isset($autoload_helpers)) {
-    if (!empty($autoload_helpers)) {
-        foreach ($autoload_helpers as $helper) {
+$helpers_autoload = require(APP_PATH.'config/helpers_autoload.php');
+if (isset($helpers_autoload)) {
+    if (!empty($helpers_autoload)) {
+        foreach ($helpers_autoload as $helper) {
             load_helper($helper);
         }
     }
 }
+unset($helpers_autoload);
 
 date_default_timezone_set(config('default_timezone'));
 
 $router = new App\Core\Router();
-$router->routes();
+$router->init();

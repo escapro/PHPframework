@@ -17,7 +17,7 @@ return [
     'csrf_expire' => time() + 7200,
     'csrf_token_name' => 'csrf_token',
     'csrf_except' => [
-        '/post'
+        
     ],
 
     // Time

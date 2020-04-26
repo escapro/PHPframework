@@ -22,4 +22,9 @@ class Exceptions {
         echo "Не удалось проверить CSRF токен";
         exit();
     }
+
+    public static function file_not_found($path) {
+        echo "Не удалось найти файл по пути: ". $path;
+        exit();
+    }
 }

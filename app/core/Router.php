@@ -3,60 +3,60 @@
 namespace App\Core;
 
 use App\Core\Exceptions;
+use App\Core\Security;
 
 class Router {
 
+    private $route;
     public $request;
-    public $route;
-    private $routeValue;
-    private $routeService;
+    public $response;
+    public $service;
 
     public function __construct() {
-        require_once(APP_PATH.'core/Functions.php');
         $this->route = new \Klein\Klein();
     }
 
-    public function routes() {
-        // require_once(APP_PATH.'config/routes.php');
-
-        // foreach ($route as $key => $value) {
-
-        //     $this->routeValue = $value;
-        //     $this->route->respond('GET', $key, function ($request) {
-
-        //         $this->run($this->routeValue, $request);
-         
-        //         // if(is_callable($this->routeValue)) {
-        //         //     $fn = $this->routeValue;
-        //         //     $fn();
-        //         // }else {
-        //         //     $this->run($this->routeValue, $request);
-        //         // }
-        //     });
-
-        // }
-
-        $this->route->respond('GET', "/", function ($request) {
-            $this->run("welcome@index", $request);
+    public function init() {
+        $route = $this->route;
+        $route->respond(function ($request, $response, $service) {
+            $this->request_handler($request, $response, $service);
         });
 
-        $this->route->respond("/post", function ($request) {
-            $this->run("welcome@post", $request);
-        });
+        require_once(APP_PATH.'config/routes.php');
+
+        $this->handle_error($route);
+        $route->dispatch();
+    }
+
+    private function request_handler($request, $response, $service) {
+
+        $this->request = $request;
+        $this->response = $response;
+        $this->service = $service;
+
+        if (!in_array($request->uri(), config('csrf_except'))) {
+            if ($request->method('post') || $request->method('put') || $request->method('delete')) {
+                if (config('csrf_protection')) {
+                    if (!Security::csrf_check()) {
+                        Exceptions::csrf_error();   
+                    }
+                }
+            }
+        }
     }
 
     public function run($pattern, $request=NULL) {
+        require_once(APP_PATH.'core/Functions.php');
         $segments = explode('@', $pattern);
         $controllerName = ucfirst(array_shift($segments));
-        $this->request['controller_name'] = $controllerName;
+        $this->request->controller_name = $controllerName;
         $controllerPath = 'app\controllers\\'.$controllerName.'Controller';
         
         try {
             $methodName = array_shift($segments);
-            $this->request['method_name'] = $methodName;
-            $this->normilizeParams($request);
+            $this->request->method_name = $methodName;
             $controller = new $controllerPath();
-            $controller->INIT($this->request);
+            $controller->RUN($this->request, $this->response, $this->service);
             $methodArgs = ReflectionMethod($controller, $methodName);
             $argArr = [];
             foreach ($methodArgs as $value) {
@@ -69,13 +69,19 @@ class Router {
         }
     }
 
-    private function normilizeParams($request) {
-        $this->request['url'] = $_SERVER['REQUEST_URI'];
-        $this->request['cookies'] = $_COOKIE;
-        $this->request['request_method'] = $_SERVER["REQUEST_METHOD"];
+    private function handle_error($route) {
+        $route->onHttpError(function ($code, $router) {
+            if ($code >= 400 && $code < 500) {
+                Exceptions::error_page(404);
+            } elseif ($code >= 500 && $code <= 599) {
+                error_log('uhhh, something bad happened');
+            }
+        });
     }
 
-    public function __destruct() {
-        $this->route->dispatch();
+    public function middleware($middlewareName) {
+        $middlewarePath = 'app\middlewares\\'.$middlewareName;
+        $middleware = new $middlewarePath();
+        $middleware->RUN($this->request, $this->response, $this->service);
     }
 }
