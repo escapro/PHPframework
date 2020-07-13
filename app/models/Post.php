@@ -26,4 +26,9 @@ class Post extends Model{
         return $result;
     }
 
+    public function qwe()
+    {
+        return $this->select(['id', 'title'], 'posts');
+    }
+
 }

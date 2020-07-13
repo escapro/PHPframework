@@ -3,7 +3,7 @@
 namespace App\Core;
 
 $route->respond('GET', '/', function () {
-    $this->middleware('CheckAge');
+    // $this->middleware('CheckAge');
     $this->run('welcome@index');
 });
 

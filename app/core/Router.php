@@ -82,6 +82,6 @@ class Router {
     public function middleware($middlewareName) {
         $middlewarePath = 'app\middlewares\\'.$middlewareName;
         $middleware = new $middlewarePath();
-        $middleware->RUN($this->request, $this->response, $this->service);
+        $middleware->INIT($this->request, $this->response, $this->service);
     }
 }

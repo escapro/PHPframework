@@ -9,7 +9,7 @@ abstract class Middleware
     public $service;
 
     abstract function handle();
-    public function RUN($request, $response, $service) {
+    public function INIT($request, $response, $service) {
         $this->request = $request;
         $this->response = $response;
         $this->service = $service;
