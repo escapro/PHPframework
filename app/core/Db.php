@@ -5,7 +5,7 @@ namespace App\Core;
 use PDO;
 use App\Core\Exceptions;
 
-class DB
+class Db
 {
 
     private static $_db;
