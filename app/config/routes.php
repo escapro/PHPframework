@@ -7,8 +7,8 @@ $route->respond('GET', '/', function () {
     $this->run('welcome@index');
 });
 
-$route->respond('POST', '/post', function ($request) {
-    var_dump(Input::post('q'));
+$route->respond('GET', '/post', function ($request) {
+    $this->run('post@index');
 });
 
 $route->respond('GET', '/qwe', function ($request, $response) {

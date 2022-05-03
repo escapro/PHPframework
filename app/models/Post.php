@@ -6,6 +6,8 @@ use App\Core\Model;
 
 class Post extends Model{
 
+    public static $table_name = 'posts';
+
     public function getPosts()
     {
         $query = "SELECT * FROM posts";
@@ -26,9 +28,9 @@ class Post extends Model{
         return $result;
     }
 
-    public function qwe()
-    {
-        return $this->select(['id', 'title'], 'posts');
-    }
+    // public function qwe()
+    // {
+    //     return $this->select(['id', 'title'], 'posts');
+    // }
 
 }

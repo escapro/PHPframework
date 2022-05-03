@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Middlewares;
+
 use App\Core\Middleware;
 
 class CheckAge extends Middleware

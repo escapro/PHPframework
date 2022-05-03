@@ -2,29 +2,32 @@
 
 namespace App\Core;
 
-use App\Core\Db;
+use App\Core\DB;
 
-abstract class Model {
+abstract class Model
+{
 
     public $db;
-    public $table;
+    public static $table_name;
 
-    public function __construct()
+    public static function all()
     {
-        $this->db = new Db();
+        return DB::row('SELECT * FROM ' . self::getTableName());
     }
 
-    public function select_all(String $table){
-        return $this->db->row('SELECT * FROM '.$table);
+    private static function getTableName()
+    {
+        return strtolower(end(explode('\\', get_called_class()))) . 's';
     }
 
-    public function select(Array $rows, String $table){
-        $query = 'SELECT';
-        foreach ($rows as $key => $value) {
-            $query .= ' '.$value;
-            $query .= $value !== end($rows) ? ', ' : ' ';
-        }
-        $query .= 'FROM '.$table;
-        return $this->db->row($query);
-    }
+    // public function select(array $rows, String $table_name)
+    // {
+    //     $query = 'SELECT';
+    //     foreach ($rows as $key => $value) {
+    //         $query .= ' ' . $value;
+    //         $query .= $value !== end($rows) ? ', ' : ' ';
+    //     }
+    //     $query .= 'FROM ' . $table_name;
+    //     return $this->db->row($query);
+    // }
 }
