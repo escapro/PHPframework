@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\View;
-use App\Core\DB;
+use App\Core\Db;
 use App\Models\Post;
 
 class WelcomeController extends Controller
@@ -22,7 +22,7 @@ class WelcomeController extends Controller
         // $users = Post::all();
         // var_dump($users);
         // var_dump(Db::table('posts')->qwe('ads'));
-        var_dump(DB::table('post')->select('title', 'fdgfd')->where('id', '=', '17')->where('id', '=', '17')->get());
+        var_dump(Db::table('post')->select('title', 'fdgfd')->where('id', '=', '17')->where('id', '=', '17')->get());
         // View::render('main', $this->data);
     }
 
