@@ -3,7 +3,14 @@
 require_once BASE_PATH. 'vendor/autoload.php';
 
 spl_autoload_register(function($class) {
-    $path = BASE_PATH.str_replace('\\', '/', $class.'.php'); 
+    $class = explode('\\', $class);
+    for ($i=0; $i < sizeof($class); $i++) { 
+        if($i != sizeof($class) - 1) {
+            $class[$i] = strtolower($class[$i]);
+        }
+    }
+    $class = implode('\\', $class);
+    $path = BASE_PATH.str_replace('\\', '/', $class.'.php');
     if (file_exists($path)) {
         require_once($path);
     }else {
